@@ -5,10 +5,13 @@ const path = require('path');
 const { body, param, validationResult } = require('express-validator');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const axios = require('axios');
 
 const app = express();
 const PORT = 3000;
-const DIRECTORY = __dirname; 
+const DIRECTORY = __dirname;
+
+const LAMBDA_URL = 'https://8oft6t9ye7.execute-api.us-east-2.amazonaws.com/default/sayFunction';
 
 app.use(express.json());
 
@@ -178,4 +181,15 @@ app.get('/files', (req, res) => {
     });
 });
 
-app.listen(PORT, () => console.log(`Server running at http://YOUR_DIGITAL_OCEAN_IP:${PORT}`));
+app.get('/say', async (req, res) => {
+    const keyword = req.query.keyword || 'nothing';
+
+    try {
+        const response = await axios.get(`${LAMBDA_URL}?keyword=${encodeURIComponent(keyword)}`);
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send(`Error calling function: ${error.message}`);
+    }
+});
+
+app.listen(PORT, () => console.log(`Server running at http://104.248.224.175:${PORT}`));

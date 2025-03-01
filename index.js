@@ -186,8 +186,9 @@ app.get('/say', async (req, res) => {
 
     try {
         const response = await axios.get(`${LAMBDA_URL}?keyword=${encodeURIComponent(keyword)}`);
-        res.send(response.data);
+        res.json(JSON.parse(response.data));
     } catch (error) {
+        console.error('Error calling Lambda:', error.response?.data || error.message);
         res.status(500).send(`Error calling function: ${error.message}`);
     }
 });

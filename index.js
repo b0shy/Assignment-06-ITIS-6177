@@ -186,7 +186,9 @@ app.get('/say', async (req, res) => {
 
     try {
         const response = await axios.get(`${LAMBDA_URL}?keyword=${encodeURIComponent(keyword)}`);
-        res.json(JSON.parse(response.data));
+
+        // response.data is already exactly what we want to return (no need to parse anything)
+        res.json(response.data);
     } catch (error) {
         console.error('Error calling Lambda:', error.response?.data || error.message);
         res.status(500).send(`Error calling function: ${error.message}`);
